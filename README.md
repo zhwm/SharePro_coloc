@@ -42,9 +42,9 @@ SharePro takes in a summary file with path to z-score files and LD files, z-scor
 
 1. **a summary file** contains two mandatory columns: names of z-score file and ld files. Multiple files are allowed and should be separated by comma. An example can be found at [dat/BMD_RSPO3.zld](dat/BMD_RSPO3.zld).
 
-2. **zscore files** that contains two mandatory columns: variant IDs and z-scores. Here are examples for [BMD](dat/BMD_SH.txt) and [RSPO3](dat/RSPO3_SH.txt) pQTL zscore files.
+2. **zscore files** that contain two mandatory columns: variant IDs and z-scores. Here are examples for [BMD](dat/BMD_SH.txt) and [RSPO3](dat/RSPO3_SH.txt) pQTL zscore files.
 
-3. **LD files** that contains Pearson correlation coefficient matrix. **Please make sure the REF/ALT alleles used in calculating LD are the same as the GWAS study!!** An example can be found at [dat/RSPO3.ld](dat/RSPO3.ld) and a working script for matching raw GWAS summary statistics and PLINK bim file are provided [here](match_bim_ss.py).
+3. **LD files** that contain correlation coefficient matrix. **Please make sure the REF/ALT alleles used in calculating LD are the same as the GWAS study!!** An example can be found at [dat/RSPO3.ld](dat/RSPO3.ld) and a working script for matching raw GWAS summary statistics and PLINK bim file is provided [here](match_bim_ss.py).
 ## Usage examples
 
 Here we use the colocalization analysis of a cis RSPO3 pQTL locus and eBMD GWAS locus as an example. In the [dat/](dat/) folder we have provided all files needed to run this example.
@@ -69,7 +69,7 @@ python3 sharepro_loc.py \
 
 With the example above, we can obtain the following output. The first section records evidence lower bound (ELBO) of our algorithm and to guarantee convergence, ELBO should always increase at each iteration.
 
-The total probabilities -1 give us an estimate of total number of causal signals. In this example, we have identified 6 causal signals. Among them, the first two causal signals are shared while the additional causal signals are trait-specific.
+The (total probabilities -1) gives us an estimate of total number of causal signals. In this example, we have identified 6 causal signals. Among them, the first two causal signals are shared while the additional causal signals are trait-specific.
 
 ```
 **********************************************************************
@@ -145,14 +145,14 @@ causal effect sizes for traits: [0.0119, 0.0049]
 
 ## Output files
 
-1. **colocalization summary** (cs) file contain seven columns: 
-cs for variant representation in effect groups; 
-total probability for overall probability weights for effect groups; 
-share for colocalization probability;
-beta for causal effect sizes;
-specific for trait specific probabilities;
-causalProb for causal probabilities; 
-variantProb for variant representation weight in effect groups.
+1. **colocalization summary** (cs) file contains seven columns: 
+`cs` for variant representation in effect groups; 
+`totalProb` for overall probability weights for effect groups; 
+`share` for colocalization probability;
+`beta` for causal effect sizes;
+`specific` for trait specific probabilities;
+`causalProb` for causal probabilities; 
+`variantProb` for variant representation weight in effect groups.
 
 ```
 $> cat BMD_SH.txt_RSPO3_SH.txt.cs 
