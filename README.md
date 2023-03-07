@@ -55,7 +55,7 @@ Additionally, we specify the sample sizes of both the eBMD GWAS study and RSPO3 
 We use `--save` to specify path to save result and `--prefix` to specify prefix of output files. We set the max number of causal signals as 10 with `--K`.
 
 ```
-python3 sharepro_loc.py \
+python sharepro_loc.py \
 --zld dat/BMD_RSPO3.zld \
 --zdir dat \
 --N 426824 10708 \
