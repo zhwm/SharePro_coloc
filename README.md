@@ -45,6 +45,7 @@ SharePro takes in a summary file with path to z-score files and LD files, z-scor
 2. **zscore files** that contain two mandatory columns: variant IDs and z-scores. Here are examples for [BMD](dat/BMD_SH.txt) and [RSPO3](dat/RSPO3_SH.txt) pQTL zscore files.
 
 3. **LD files** that contain correlation coefficient matrix. **Please make sure the REF/ALT alleles used in calculating LD are the same as the GWAS study!!** An example can be found at [dat/RSPO3.ld](dat/RSPO3.ld) and a working script for matching raw GWAS summary statistics and PLINK bim file is provided [here](match_bim_ss.py).
+
 ## Usage examples
 
 Here we use the colocalization analysis of a cis RSPO3 pQTL locus and eBMD GWAS locus as an example. In the [dat/](dat/) folder we have provided all files needed to run this example.
@@ -55,7 +56,7 @@ Additionally, we specify the sample sizes of both the eBMD GWAS study and RSPO3 
 We use `--save` to specify path to save result and `--prefix` to specify prefix of output files. We set the max number of causal signals as 10 with `--K`.
 
 ```
-python sharepro_loc.py \
+python3 sharepro_loc.py \
 --zld dat/BMD_RSPO3.zld \
 --zdir dat \
 --N 426824 10708 \
@@ -81,89 +82,59 @@ LD list with 1 LD blocks loaded
 
 processing BMD_SH.txt,RSPO3_SH.txt
 **********************************************************************
-Iteration-->0 . Likelihood: 1448.9 . KL_b: -29.6 . KL_c: -99.2 . KL_s: 42.4 . ELBO: 1362.5
+Iteration-->0 . Likelihood: 1453.7 . KL_b: -25.1 . KL_c: -104.0 . KL_s: 40.6 . ELBO: 1365.2
 **********************************************************************
-Iteration-->1 . Likelihood: 1455.9 . KL_b: -29.5 . KL_c: -96.3 . KL_s: 39.6 . ELBO: 1369.7
+Iteration-->1 . Likelihood: 1458.1 . KL_b: -23.0 . KL_c: -94.9 . KL_s: 39.2 . ELBO: 1379.5
 **********************************************************************
-Iteration-->2 . Likelihood: 1458.3 . KL_b: -30.0 . KL_c: -92.3 . KL_s: 39.3 . ELBO: 1375.3
+Iteration-->2 . Likelihood: 1459.5 . KL_b: -22.4 . KL_c: -92.4 . KL_s: 39.1 . ELBO: 1383.8
 **********************************************************************
-Iteration-->3 . Likelihood: 1459.0 . KL_b: -30.4 . KL_c: -92.2 . KL_s: 39.2 . ELBO: 1375.7
+Iteration-->3 . Likelihood: 1459.7 . KL_b: -22.4 . KL_c: -92.3 . KL_s: 39.1 . ELBO: 1384.1
 **********************************************************************
-Iteration-->4 . Likelihood: 1459.1 . KL_b: -30.5 . KL_c: -92.1 . KL_s: 39.2 . ELBO: 1375.7
+Iteration-->4 . Likelihood: 1459.7 . KL_b: -22.4 . KL_c: -92.2 . KL_s: 39.1 . ELBO: 1384.1
 **********************************************************************
-Iteration-->5 . Likelihood: 1459.1 . KL_b: -30.5 . KL_c: -92.1 . KL_s: 39.2 . ELBO: 1375.7
-total probabilities 6.9374
-entropy of posterior distribution:[0.68 0.   0.69 2.69 1.37 3.06 7.68 7.68 7.68 7.68]
+Iteration-->5 . Likelihood: 1459.7 . KL_b: -22.4 . KL_c: -92.2 . KL_s: 39.1 . ELBO: 1384.1
+Attainable coverage for effect groups: [1.   1.   1.   0.99 1.   1.   0.17 0.   0.   0.78]
 The 0-th effect group contains effective variants:
-causal variants: ['rs853974']
-variant probabilities for this effect group: [1.]
+causal variants: ['rs7741021', 'rs9482773']
+variant probabilities for this effect group: [0.5941, 0.4059]
 shared probability for this effect group: 1.0
-specific probabilities for this effect group: [0.0, 0.0]
-causal probabilities of this effect group for traits: [1.0, 1.0]
-causal effect sizes for traits: [-0.0108, -0.0671]
 
 The 1-th effect group contains effective variants:
-causal variants: ['rs7741021', 'rs9482773']
-variant probabilities for this effect group: [0.5895 0.4105]
+causal variants: ['rs853974']
+variant probabilities for this effect group: [1.0]
 shared probability for this effect group: 1.0
-specific probabilities for this effect group: [0.0, 0.0]
-causal probabilities of this effect group for traits: [1.0, 1.0]
-causal effect sizes for traits: [-0.0702, -0.2367]
 
 The 2-th effect group contains effective variants:
 causal variants: ['rs577721086', 'rs72959041']
-variant probabilities for this effect group: [0.5322 0.4677]
-shared probability for this effect group: 0.0044
-specific probabilities for this effect group: [0.0, 0.9956]
-causal probabilities of this effect group for traits: [0.0044, 1.0]
-causal effect sizes for traits: [-0.0044, -0.0822]
+variant probabilities for this effect group: [0.5313, 0.4687]
+shared probability for this effect group: 0.0094
 
 The 3-th effect group contains effective variants:
-causal variants: ['rs11759578', 'rs77525683', 'rs73593094', 'rs73593068', 'rs73577838', 'rs75607329']
-variant probabilities for this effect group: [0.591  0.2055 0.0724 0.0357 0.0301 0.0153]
+causal variants: ['rs717796', 'rs7775814', 'rs1512450', 'rs7775090', 'rs1512449', 'rs910536', 'rs6902741', 'rs1569870', 'rs7738255', 'rs1080708', 'rs7756072']
+variant probabilities for this effect group: [0.1217, 0.1167, 0.1018, 0.0879, 0.0867, 0.085, 0.0785, 0.0747, 0.0706, 0.0705, 0.0639]
 shared probability for this effect group: 0.0001
-specific probabilities for this effect group: [0.0, 0.9999]
-causal probabilities of this effect group for traits: [0.0001, 1.0]
-causal effect sizes for traits: [0.0015, -0.0651]
 
 The 4-th effect group contains effective variants:
-causal variants: ['rs717796', 'rs7775814', 'rs1512450', 'rs7775090', 'rs1512449', 'rs910536', 'rs6902741', 'rs1569870', 'rs7738255', 'rs1080708', 'rs7756072']
-variant probabilities for this effect group: [0.1194 0.1146 0.1003 0.0873 0.0858 0.0846 0.0779 0.0743 0.0703 0.0702 0.0638]
-shared probability for this effect group: 0.0
-specific probabilities for this effect group: [1.0, 0.0]
-causal probabilities of this effect group for traits: [1.0, 0.0]
-causal effect sizes for traits: [0.0114, -0.0016]
-
-The 5-th effect group contains effective variants:
-causal variants: ['rs2800728', 'rs727330', 'rs727331', 'rs2800720', 'rs2800721', 'rs10456964', 'rs2800733', 'rs2800727', 'rs2745351', 'rs2800732', 'rs2745356', 'rs2745355', 'rs727332', 'rs2800729', 'rs2800730', 'rs719728', 'rs2800719', 'rs2745354', 'rs2800718', 'rs2800723', 'rs2800722']
-variant probabilities for this effect group: [0.0668 0.065  0.0644 0.0634 0.0599 0.0527 0.0518 0.0512 0.0465 0.0415 0.0414 0.0407 0.0402 0.0399 0.0393 0.0386 0.0347 0.0335 0.0331 0.033  0.033 ]
-shared probability for this effect group: 0.0
-specific probabilities for this effect group: [1.0, 0.0]
-causal probabilities of this effect group for traits: [1.0, 0.0]
-causal effect sizes for traits: [0.0119, 0.0049]
+causal variants: ['rs11759578', 'rs77525683', 'rs73593094', 'rs73593068', 'rs73577838', 'rs9482768']
+variant probabilities for this effect group: [0.6213, 0.2032, 0.0666, 0.031, 0.0264, 0.0131]
+shared probability for this effect group: 0.0003
 ```
 
 ## Output files
 
 1. **colocalization summary** (cs) file contains seven columns: 
 `cs` for variant representation in effect groups; 
-`totalProb` for overall probability weights for effect groups; 
 `share` for colocalization probability;
-`beta` for causal effect sizes;
-`specific` for trait specific probabilities;
-`causalProb` for causal probabilities; 
 `variantProb` for variant representation weight in effect groups.
 
 ```
-$> cat BMD_SH.txt_RSPO3_SH.txt.cs 
-cs	totalProb	share	beta	specific	causalProb	variantProb
-rs853974	1.0	1.0	-0.0108,-0.0671	0.0,0.0	1.0,1.0	1.0
-rs7741021/rs9482773	1.0	1.0	-0.0702,-0.2367	0.0,0.0	1.0,1.0	0.567/0.433
-rs577721086/rs72959041	0.9999	0.0042	-0.0044,-0.0821	0.0,0.9958	0.0042,1.0	0.5327/0.4672
-rs11759578/rs77525683/rs73593094/rs73593068/rs73577838/rs75607329	0.9501	0.0001	0.0015,-0.0651	0.0,0.9999	0.0001,1.0	0.592/0.2079/0.0723/0.034/0.0293/0.0146
-rs717796/rs7775814/rs7775090/rs1512450/rs910536/rs1512449/rs6902741/rs1569870/rs1080708/rs7738255/rs7756072	0.9493	0.0	0.0114,-0.0017	1.0,0.0	1.0,0.0	0.1065/0.1/0.0985/0.0979/0.0953/0.0878/0.0796/0.0769/0.0706/0.0705/0.0657
-rs727330/rs2800728/rs727331/rs2800720/rs2800721/rs2800727/rs10456964/rs2800733/rs2800730/rs2745351/rs2800729/rs2800732/rs719728/rs2745356/rs2745355/rs727332/rs2800719/rs2745354/rs2800718/rs10456965/rs2800723	0.9716	0.0	0.012,0.0042	1.0,0.0	1.0,0.0	0.0711/0.0696/0.0691/0.0687/0.0643/0.0574/0.0571/0.0468/0.0448/0.0447/0.0447/0.042/0.0404/0.0354/0.0348/0.0342/0.0308/0.0296/0.029/0.0287/0.0284
-
+$> cat res/BMD_SH.txt_RSPO3_SH.txt.cs 
+cs      share   variantProb
+rs7741021/rs9482773     1.0     0.5941/0.4059
+rs853974        1.0     1.0
+rs577721086/rs72959041  0.0094  0.5313/0.4687
+rs717796/rs7775814/rs1512450/rs7775090/rs1512449/rs910536/rs6902741/rs1569870/rs7738255/rs1080708/rs7756072     0.0001  0.1217/0.1167/0.1018/0.0879/0.0867/0.085/0.0785/0.0747/0.0706/0.0705/0.0639
+rs11759578/rs77525683/rs73593094/rs73593068/rs73577838/rs9482768        0.0003  0.6213/0.2032/0.0666/0.031/0.0264/0.0131
 ```
 
 2. **hyperparamters summary** (h2) file adds two additional columns in the summary file to record the heritability and effect size variance estimates used in the colocalization algorithms.
