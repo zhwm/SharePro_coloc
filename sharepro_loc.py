@@ -38,9 +38,8 @@ def get_HESS_h2_z(LD, Z, N, ptLD=0.2, ptp=1e-5):
     var_b = np.max(zsquare[Indidx]) / N
     if h2_hess < 0.0001:
         h2_hess = 0.0001
-    if h2_hess > 0.2:
-        h2_hess = 0.2
-        print("Heritability estimates is exceeding 0.2, which is rare for a locus, please check!!")
+    if h2_hess > 0.9:
+        h2_hess = 0.9
     return h2_hess, var_b
 
 
@@ -150,7 +149,7 @@ class SharePro(object):
         """calculate c1*c2*s"""
         return np.prod(np.array([i.delta for i in self.SR]), axis=0)
 
-    def get_effect(self, cthres=0.95, ethres=20):
+    def get_effect(self, cthres=0.95, ethres=50):
         vidx = np.argsort(-self.gamma, axis=1)
         matidx = np.argsort(-self.gamma, axis=0)
         mat_eff = np.zeros((self.p, self.k))  # effective gamma
@@ -236,7 +235,7 @@ parser.add_argument('--varb', type=float, default=None, nargs='+',
 parser.add_argument('--ptLD', type=float, default=0.2, help='P+T LD cutoff')
 parser.add_argument('--ptp', type=float, default=1e-5, help='P+T p value cutoff')
 parser.add_argument('--cthres', type=float, default=0.95, help='coverage level for credible sets')
-parser.add_argument('--ethres', type=float, default=20.0, help='entropy level for credible sets')
+parser.add_argument('--ethres', type=float, default=50.0, help='entropy level for credible sets')
 
 
 args = parser.parse_args()

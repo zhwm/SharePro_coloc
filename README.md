@@ -118,6 +118,11 @@ The 4-th effect group contains effective variants:
 causal variants: ['rs11759578', 'rs77525683', 'rs73593094', 'rs73593068', 'rs73577838', 'rs9482768']
 variant probabilities for this effect group: [0.6213, 0.2032, 0.0666, 0.031, 0.0264, 0.0131]
 shared probability for this effect group: 0.0003
+
+The 5-th effect group contains effective variants:
+causal variants: ['rs2800728', 'rs727330', 'rs727331', 'rs2800720', 'rs2800721', 'rs10456964', 'rs2800733', 'rs2800727', 'rs2745351', 'rs2745356', 'rs2800732', 'rs2745355', 'rs727332', 'rs2800729', 'rs2800730', 'rs719728', 'rs2800719', 'rs2745354', 'rs2800718', 'rs2800723', 'rs2800722']
+variant probabilities for this effect group: [0.0689, 0.0665, 0.0658, 0.0647, 0.0608, 0.0533, 0.0521, 0.0514, 0.0463, 0.0412, 0.041, 0.0404, 0.0399, 0.0394, 0.0386, 0.0379, 0.034, 0.0327, 0.0324, 0.0322, 0.0322]
+shared probability for this effect group: 0.0002
 ```
 
 ## Output files
@@ -135,6 +140,7 @@ rs853974        1.0     1.0
 rs577721086/rs72959041  0.0094  0.5313/0.4687
 rs717796/rs7775814/rs1512450/rs7775090/rs1512449/rs910536/rs6902741/rs1569870/rs7738255/rs1080708/rs7756072     0.0001  0.1217/0.1167/0.1018/0.0879/0.0867/0.085/0.0785/0.0747/0.0706/0.0705/0.0639
 rs11759578/rs77525683/rs73593094/rs73593068/rs73577838/rs9482768        0.0003  0.6213/0.2032/0.0666/0.031/0.0264/0.0131
+rs2800728/rs727330/rs727331/rs2800720/rs2800721/rs10456964/rs2800733/rs2800727/rs2745351/rs2745356/rs2800732/rs2745355/rs727332/rs2800729/rs2800730/rs719728/rs2800719/rs2745354/rs2800718/rs2800723/rs2800722  0.0002  0.0689/0.0665/0.0658/0.0647/0.0608/0.0533/0.0521/0.0514/0.0463/0.0412/0.041/0.0404/0.0399/0.0394/0.0386/0.0379/0.034/0.0327/0.0324/0.0322/0.0322
 ```
 
 2. **hyperparamters summary** (h2) file adds two additional columns in the summary file to record the heritability and effect size variance estimates used in the colocalization algorithms.
