@@ -191,12 +191,12 @@ def zld(args):
         assert len(z) == len(ldmat[0])
         assert all(len(i) == len(ldmat[0]) for i in ldmat)
         Z = z.values
-        assert not np.isnan(LD).any(), "The zscore files contains NaN values."
+        assert not np.isnan(Z).any(), "Some zscore file contains NaN values."
         XX = np.ones(Z.shape) * args.N
         ytX = Z * np.sqrt(args.N)
         XtX = [i*j for i, j in zip(ldmat, args.N)]
         for mat in XtX:
-            assert not np.isnan(mat).any(), "The LD matrix contains NaN values."
+            assert not np.isnan(mat).any(), "Some LD matrix contains NaN values."
         hess, varb = zip(*[get_HESS_h2_z(ldmat[i], Z[:, i], args.N[i], ptLD=args.ptLD, ptp=args.ptp)
                            for i in range(nums)])
         if args.hess is not None:
