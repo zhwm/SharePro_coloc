@@ -19,6 +19,8 @@ def title():
 
 def get_HESS_h2_z(LD, Z, N, ptLD=0.2, ptp=1e-5):
     """calculate local heritabilities"""
+    assert not np.isnan(LD).any(), "The LD matrix contains NaN values."
+    assert not np.isnan(Z).any(), "The zscore files contains NaN values."
     zsquare = Z ** 2
     idx_retain = []
     idx_exclude = [i for i in range(len(Z))]
@@ -189,9 +191,12 @@ def zld(args):
         assert len(z) == len(ldmat[0])
         assert all(len(i) == len(ldmat[0]) for i in ldmat)
         Z = z.values
+        assert not np.isnan(LD).any(), "The zscore files contains NaN values."
         XX = np.ones(Z.shape) * args.N
         ytX = Z * np.sqrt(args.N)
         XtX = [i*j for i, j in zip(ldmat, args.N)]
+        for mat in XtX:
+            assert not np.isnan(mat).any(), "The LD matrix contains NaN values."
         hess, varb = zip(*[get_HESS_h2_z(ldmat[i], Z[:, i], args.N[i], ptLD=args.ptLD, ptp=args.ptp)
                            for i in range(nums)])
         if args.hess is not None:
@@ -227,7 +232,7 @@ parser.add_argument('--N', type=int, default=None, nargs='+', help='sample sizes
 parser.add_argument('--save', type=str, default=None, help='path to save results', required=True)
 parser.add_argument('--prefix', type=str, default=None, help='prefix for result files', required=True)
 parser.add_argument('--verbose', action="store_true", help='options for displaying more information')
-parser.add_argument('--K', type=int, default=None, help='largest number of causal signals', required=True)
+parser.add_argument('--K', type=int, default=5, help='largest number of causal signals')
 parser.add_argument('--sigma', type=float, default=1e-5, help='prior colocalization probabilities')
 parser.add_argument('--hess', type=float, default=None, nargs='+', help='heritability estimates, HESS estimates used as default')
 parser.add_argument('--varb', type=float, default=None, nargs='+',
