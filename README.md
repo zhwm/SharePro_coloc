@@ -1,11 +1,11 @@
 # SharePro for colocalization analysis
 
-SharePro is a command line tool for efficient and accurate colocalization. For analysis conducted in the SharePro for colocalization analysis paper, please refer to [SharePro_coloc_analysis](https://github.com/zhwm/sharepro_coloc_analysis).
+SharePro is a command line tool for efficient and accurate colocalization. For analysis conducted in the [SharePro for colocalization analysis paper](https://doi.org/10.1101/2023.07.24.550431), please refer to [SharePro_coloc_analysis](https://github.com/zhwm/sharepro_coloc_analysis).
 
 ## Overview 
 
-Colocalization analysis is a commonly used statistical procedure for assessing whether two traits share the same genetic signals identified in genome-wide association studies (GWAS). It is important for understanding the interplay between heritable traits.
-SharePro takes marginal associations (z-scores) from GWAS summary statistics and matched LD matrix as inputs, and infers posterior probability of colocalization. Different from the variant-level approach and the locus-level approach in existing methods, SharePro takes an effect group-level approach to model uncertainties originating from LD and multiple causal signals in colocalization analysis. 
+Colocalization analysis is a commonly used statistical procedure for assessing whether two or more traits share the same genetic signals identified in genome-wide association studies (GWAS). It is important for understanding the interplay between heritable traits.
+SharePro takes marginal associations (z-scores) from GWAS summary statistics and linkage disequilibrium (LD) infromation as inputs, and infers posterior probability of colocalization. Unlike existing methods, SharePro takes an effect group-level approach to integrate LD modelling and colocalization assessment to account for multiple causal variants in colocalization analysis.
 
 <p align="center">
   <img src="doc/SharePro_loc.png" alt="example image">
@@ -15,7 +15,7 @@ SharePro takes marginal associations (z-scores) from GWAS summary statistics and
 
 ## Installation
 
-SharePro was developed under Python 3.9.7 environment but should be compatible with older versions of Python 3. The following Python modules are required:
+SharePro was developed under Python 3.9.7 but should be compatible with other versions of Python 3. The following Python modules are required:
 
 * [numpy](http://www.numpy.org/)
 * [scipy](http://www.scipy.org/)
@@ -29,7 +29,7 @@ cd SharePro_coloc
 pip install -r requirements.txt 
 ``` 
 
-To test the installation and display basic usage:
+To test the installation and display basic usages:
 ```
 python sharepro_loc.py -h
 ```
@@ -38,25 +38,25 @@ python sharepro_loc.py -h
 
 Example input files are included in the [dat](dat/) directory.
 
-SharePro takes in a summary file with path to z-score files and LD files, z-scores files, LD files as inputs.
+SharePro takes in a summary file as well as z-scores files and LD files as inputs.
 
-1. **a summary file** contains two mandatory columns: names of z-score file and ld files. Multiple files are allowed and should be separated by comma. An example can be found at [dat/BMD_RSPO3.zld](dat/BMD_RSPO3.zld).
+1. The **summary file** contains two mandatory columns: names of z-score files and ld files. Multiple files are allowed and should be separated by comma. An example can be found at [dat/BMD_RSPO3.zld](dat/BMD_RSPO3.zld).
 
-2. **zscore files** that contain two mandatory columns: variant IDs and z-scores. Here are examples for [BMD](dat/BMD_SH.txt) and [RSPO3](dat/RSPO3_SH.txt) pQTL zscore files.
+2. The **zscore files** contain two mandatory columns: variant IDs and z-scores. Here are examples for [BMD](dat/BMD_SH.txt) GWAS and [RSPO3](dat/RSPO3_SH.txt) pQTL zscore files.
 
-3. **LD files** that contain correlation coefficient matrix. **Please make sure the REF/ALT alleles used in calculating LD are the same as the GWAS study!!** An example can be found at [dat/RSPO3.ld](dat/RSPO3.ld) and a working script for matching raw GWAS summary statistics and PLINK bim file is provided [here](match_bim_ss.py).
+3. The **LD files** contain Pearson correlation between variants. **Please make sure the REF/ALT alleles used in calculating LD are the same as the GWAS study!!** An example can be found at [dat/RSPO3.ld](dat/RSPO3.ld) and a working script for matching raw GWAS summary statistics and PLINK bim file is [provided](match_bim_ss.py).
 
 ## Usage examples
 
-Here we use the colocalization analysis of a cis RSPO3 pQTL locus and eBMD GWAS locus as an example. In the [dat/](dat/) folder we have provided all files needed to run this example.
+We use the colocalization analysis of a RSPO3 cis-pQTL and eBMD GWAS as an example. The [dat/](dat/) folder contains all files required for this example.
 If you want to learn more about this locus, please refer to the [analysis repo](https://github.com/zhwm/SharePro_coloc_analysis/tree/main/dat).
 
-Here we use `--zld` to indicate path to the summary file and `--zdir` to indicate path to zscore files.
-Additionally, we specify the sample sizes of both the eBMD GWAS study and RSPO3 pQTL study with `--N`.
-We use `--save` to specify path to save result and `--prefix` to specify prefix of output files. We set the max number of causal signals as 10 with `--K`.
+We use `--zld` to indicate the path to the summary file and `--zdir` to indicate the path to the zscore files.
+Additionally, we can specify the sample sizes of the eBMD GWAS study and RSPO3 pQTL study with `--N`.
+Next, we specify path to save results with `--save` and use `--prefix` to specify prefix of output files. The max number of causal signals is set to 10 using `--K`.
 
 ```
-python3 sharepro_loc.py \
+python sharepro_loc.py \
 --zld dat/BMD_RSPO3.zld \
 --zdir dat \
 --N 426824 10708 \
@@ -68,9 +68,7 @@ python3 sharepro_loc.py \
 
 ## Output interpretation
 
-With the example above, we can obtain the following output. The first section records evidence lower bound (ELBO) of our algorithm and to guarantee convergence, ELBO should always increase at each iteration.
-
-The (total probabilities -1) gives us an estimate of total number of causal signals. In this example, we have identified 6 causal signals. Among them, the first two causal signals are shared while the additional causal signals are trait-specific.
+Here are the expected outputs from the example above. We have identified altogether 6 causal signals in this locus. Among them, the first two demonstrated strong evidence for colocalization.
 
 ```
 **********************************************************************
@@ -127,10 +125,10 @@ shared probability for this effect group: 0.0002
 
 ## Output files
 
-1. **colocalization summary** (cs) file contains seven columns: 
-`cs` for variant representation in effect groups; 
-`share` for colocalization probability;
-`variantProb` for variant representation weight in effect groups.
+1. **colocalization summary** (cs) file contains three columns: 
+`cs` for variant representations in effect groups; 
+`share` for colocalization probabilities;
+`variantProb` for variant representation weights in effect groups.
 
 ```
 $> cat res/BMD_SH.txt_RSPO3_SH.txt.cs 
@@ -143,10 +141,16 @@ rs11759578/rs77525683/rs73593094/rs73593068/rs73577838/rs9482768        0.0003  
 rs2800728/rs727330/rs727331/rs2800720/rs2800721/rs10456964/rs2800733/rs2800727/rs2745351/rs2745356/rs2800732/rs2745355/rs727332/rs2800729/rs2800730/rs719728/rs2800719/rs2745354/rs2800718/rs2800723/rs2800722  0.0002  0.0689/0.0665/0.0658/0.0647/0.0608/0.0533/0.0521/0.0514/0.0463/0.0412/0.041/0.0404/0.0399/0.0394/0.0386/0.0379/0.034/0.0327/0.0324/0.0322/0.0322
 ```
 
-2. **hyperparamters summary** (h2) file adds two additional columns in the summary file to record the heritability and effect size variance estimates used in the colocalization algorithms.
+2. **hyperparamters summary** (h2) file adds two additional columns to the summary file to record hyperparameter estimates used in the colocalization algorithms.
 
 ```
 $> cat BMD_RSPO3.h2              
 z	ld	h2	varb
 BMD_SH.txt,RSPO3_SH.txt	RSPO3.ld,RSPO3.ld	4.86e-03,7.84e-02	2.77e-04,6.76e-03
 ```
+
+## Citations
+
+If you find SharePro for colocalization analysis useful, please cite:
+
+[Wenmin Zhang, Tianyuan Lu, Robert Sladek, Yue Li, Hamed Najafabadi, Josée Dupuis. SharePro: an accurate and efficient genetic colocalization method accounting for multiple causal signals.](https://doi.org/10.1101/2023.07.24.550431)
