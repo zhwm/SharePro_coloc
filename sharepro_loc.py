@@ -17,7 +17,7 @@ def title():
     print('**********************************************************************')
 
 
-def get_HESS_h2_z(LD, Z, N, ptLD=0.2, ptp=1e-5):
+def get_HESS_h2_z(LD, Z, N, ptLD, ptp):
     """calculate local heritabilities"""
     assert not np.isnan(LD).any(), "The LD matrix contain NaN values."
     assert not np.isnan(Z).any(), "The zscore files contain NaN values."
@@ -124,7 +124,7 @@ class SharePro(object):
         elbo = ll + mklbeta + mkldelta + mklgamma
         return ll, mklbeta, mkldelta, mklgamma, elbo
 
-    def train(self, XX, ytX, XtX, maxite=20, eps=0.01, verbose=True, loss=0.0):
+    def train(self, XX, ytX, XtX, maxite, eps, verbose=True, loss=0.0):
         for ite in range(maxite):
             self.infer_q_s(ytX, XtX)
             ll, mklbeta, mkldelta, mklgamma, elbo = self.get_elbo(XX, ytX, XtX)
@@ -152,7 +152,7 @@ class SharePro(object):
         """calculate c1*c2*s"""
         return np.prod(np.array([i.delta for i in self.SR]), axis=0)
 
-    def get_effect(self, cthres=0.95, ethres=0.2):
+    def get_effect(self, cthres, ethres):
         vidx = np.argsort(-self.gamma, axis=1)
         matidx = np.argsort(-self.gamma, axis=0)
         mat_eff = np.zeros((self.p, self.k))  # effective gamma
@@ -193,7 +193,7 @@ def colocalize(row):
     if args.varb is not None:
         varb = args.varb
     model = SharePro(z.shape[0], 1, XX, hess, varb, sigma=args.sigma)
-    model.train(XX, ytX, XtX, verbose=args.verbose)
+    model.train(XX, ytX, XtX, verbose=args.verbose, maxite=args.maxite, eps=args.eps)
     eff, eff_gamma, eff_share = model.get_effect(cthres=args.cthres, ethres=args.ethres)
     allcs = list(
         zip(
@@ -203,9 +203,9 @@ def colocalize(row):
             [model.k]
             )
         )
-    if max(eff_share.values()) <= args.hthres:
+    if len(eff)==0 or max(eff_share.values()) <= args.hthres:
         model = SharePro(z.shape[0], args.K, XX, hess, varb, sigma=args.sigma)
-        if model.train(XX, ytX, XtX, verbose=args.verbose):
+        if model.train(XX, ytX, XtX, verbose=args.verbose, maxite=args.maxite, eps=args.eps):
             eff, eff_gamma, eff_share = model.get_effect(cthres=args.cthres, ethres=args.ethres)
             allcs += list(
                 zip(
@@ -215,17 +215,20 @@ def colocalize(row):
                     [model.k] * len(eff),
                 )
             )
-    allcs = pd.DataFrame(allcs)
-    allcs['cs'] = ['/'.join([z.index[j] for j in i]) for i in allcs[0]]
-    allcs['share'] = allcs[2]
-    allcs['k'] = allcs[3]
-    allcs['variantProb'] = ['/'.join([str(j) for j in i]) for i in allcs[1]]
-    allcs[['cs', 'share', 'variantProb', 'k']].to_csv(
-        os.path.join(args.save, f"{row[0].replace(',', '_')}.cs"),
-        sep='\t',
-        header=True,
-        index=False)
-    print(f'Colocalization probability: {max(eff_share.values())}')
+    if len(eff_share) > 0:
+        print(f'Colocalization probability: {max(eff_share.values())}')
+        allcs = pd.DataFrame(allcs)
+        allcs['cs'] = ['/'.join([z.index[j] for j in i]) for i in allcs[0]]
+        allcs['share'] = allcs[2]
+        allcs['k'] = allcs[3]
+        allcs['variantProb'] = ['/'.join([str(j) for j in i]) for i in allcs[1]]
+        allcs[['cs', 'share', 'variantProb', 'k']].to_csv(
+            os.path.join(args.save, f"{row[0].replace(',', '_')}.cs"),
+            sep='\t',
+            header=True,
+            index=False)
+    else:
+        print(f'No effect groups detected at the current attainable coverage threshold {args.cthres}. Please increase power for GWAS.')
     #for e in eff:
     #    mcs_idx = [z.index[j] for j in eff[e]]
     #    print(f'The {e}-th effect group contains effective variants:')
@@ -249,9 +252,12 @@ parser.add_argument('--varb', type=float, default=None, nargs='+',
                     help='effect size variance estimated, estimates from HESS used as default')
 parser.add_argument('--ptLD', type=float, default=0.2, help='P+T LD cutoff')
 parser.add_argument('--ptp', type=float, default=1e-5, help='P+T p value cutoff')
-parser.add_argument('--cthres', type=float, default=0.95, help='coverage level for credible sets')
-parser.add_argument('--ethres', type=float, default=0.2, help='entropy level for credible sets')
+parser.add_argument('--cthres', type=float, default=0.95, help='attainable coverage threshold for effect groups')
+parser.add_argument('--ethres', type=float, default=0.05, help='entropy threshold for effect groups')
 parser.add_argument('--hthres', type=float, default=1.0, help='default colocalization threshold for allowing multiple causal variants')
+parser.add_argument('--maxite', type=int, default=20, help='max number of iterations')
+parser.add_argument('--eps', type=float, default=0.1, help='convergence criterion')
+
 
 args = parser.parse_args()
 title()
