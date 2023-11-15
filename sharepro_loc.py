@@ -135,7 +135,7 @@ class SharePro(object):
                 converged = True
                 break
             if ite == (maxite - 1):
-                print("Detected mismatch between summary statistics and LD matrix. Using K=1 instead...")
+                print("Detected mismatch between summary statistics and LD matrix. Output the results obtained from K=1 instead...")
                 converged = False               
             loss = elbo
         return converged
