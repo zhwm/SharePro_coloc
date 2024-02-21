@@ -1,6 +1,5 @@
 import pandas as pd
 import argparse
-import os
 import numpy as np
 from scipy.special import softmax, expit
 from scipy.stats import chi2
@@ -12,7 +11,7 @@ np.set_printoptions(precision=4, linewidth=200)
 def title():
     print('**********************************************************************')
     print('* SharePro for accurate and efficient colocalization                 *')
-    print('* Version 3.0.0                                                      *')
+    print('* Version 3.0.1 (take beta se n for each locus)                      *')
     print('* (C) Wenmin Zhang (wenmin.zhang@mail.mcgill.ca)                     *')
     print('**********************************************************************')
 
@@ -176,80 +175,14 @@ class SharePro(object):
                         break
         return eff, eff_gamma, eff_share
 
-
-def colocalize(row):
-    print(f"processing {row.iloc[0]}")
-    zs = row.iloc[0].split(',')
-    lds = row.iloc[1].split(',')
-    z = pd.concat([pd.read_csv(os.path.join(args.zdir, zs[i]), sep='\t', header=None, index_col=0) for i in range(len(zs))], axis=1, join='inner')
-    ldmat = [pd.read_csv(os.path.join(args.zdir, lds[i]), sep='\s+', header=None).values for i in range(len(zs))]
-    assert len(z) == len(ldmat[0]), 'Please make sure all files contain the same variants!'
-    assert all(len(i) == len(ldmat[0]) for i in ldmat), 'Please make sure all files contain the same variants!'
-    XX = np.ones(z.shape) * args.N
-    ytX = z.values * np.sqrt(args.N)
-    XtX = [i*j for i, j in zip(ldmat, args.N)]
-    hess, varb = zip(*[get_HESS_h2_z(ldmat[i], z.values[:, i], args.N[i], ptLD=args.ptLD, ptp=args.ptp) for i in range(len(zs))])
-    if args.hess is not None:
-        hess = args.hess
-    if args.varb is not None:
-        varb = args.varb
-    #model = SharePro(z.shape[0], 1, XX, hess, varb, sigma=args.sigma)
-    #print("K = 1")
-    #model.train(XX, ytX, XtX, verbose=args.verbose, maxite=args.maxite, eps=args.eps)
-    #eff, eff_gamma, eff_share = model.get_effect(cthres=args.cthres, ethres=args.ethres)
-    #allcs = list(
-    #    zip(
-    #        eff.values(),
-    #        eff_gamma.values(),
-    #        eff_share.values(),
-    #        [model.k]
-    #        )
-    #    )
-    for nk in range(args.K, 0, -1):
-        model = SharePro(z.shape[0], nk, XX, hess, varb, sigma=args.sigma)
-        print(f"K = {nk}")
-        if model.train(XX, ytX, XtX, verbose=args.verbose, maxite=args.maxite, eps=args.eps):
-            eff, eff_gamma, eff_share = model.get_effect(cthres=args.cthres, ethres=args.ethres)
-            allcs = list(
-                zip(
-                    eff.values(),
-                    eff_gamma.values(),
-                    eff_share.values(),
-                    [model.k] * len(eff),
-                )
-            )
-            break
-    if len(eff_share) > 0:
-        allcs = pd.DataFrame(allcs)
-        allcs['cs'] = ['/'.join([z.index[j] for j in i]) for i in allcs[0]]
-        allcs['share'] = allcs[2]
-        print(f'Colocalization probability: {max(allcs[2])}')
-        allcs['k'] = allcs[3]
-        allcs['variantProb'] = ['/'.join([str(j) for j in i]) for i in allcs[1]]
-        allcs[['cs', 'share', 'variantProb', 'k']].to_csv(
-            os.path.join(args.save, f"{row.iloc[0].replace(',', '_')}.cs"),
-            sep='\t',
-            header=True,
-            index=False)
-    else:
-        print(f'No effect groups detected at the current attainable coverage threshold {args.cthres}. Please increase power for GWAS.')
-    for e in eff:
-        mcs_idx = [z.index[j] for j in eff[e]]
-        print(f'The {e}-th effect group contains effective variants:')
-        print(f'causal variants: {mcs_idx}')
-        print(f'variant probabilities for this effect group: {eff_gamma[e]}')
-        print(f'shared probability for this effect group: {eff_share[e]}')
-        print()
-
-
 parser = argparse.ArgumentParser(description='SharePro Commands:')
-parser.add_argument('--zld', type=str, default=None,
-                    help='index file contains path to matched zscore and ld lists', required=True)
-parser.add_argument('--zdir', type=str, default=None, help='path to zscores files', required=True)
-parser.add_argument('--N', type=int, default=None, nargs='+', help='sample sizes', required=True)
+parser.add_argument('--z', type=str, default=None, nargs='+',
+                    help='file to matched summary statisticis', required=True)
+parser.add_argument('--ld', type=str, default=None, nargs='+',
+                    help='file to matched ld matrix', required=True)
 parser.add_argument('--save', type=str, default=None, help='path to save results', required=True)
 parser.add_argument('--verbose', action="store_true", help='options for displaying more information')
-parser.add_argument('--K', type=int, default=5, help='largest number of causal signals')
+parser.add_argument('--K', type=int, default=10, help='largest number of causal signals')
 parser.add_argument('--sigma', type=float, default=1e-5, help='prior colocalization probabilities')
 parser.add_argument('--hess', type=float, default=None, nargs='+', help='heritability estimates, HESS estimates used as default')
 parser.add_argument('--varb', type=float, default=None, nargs='+',
@@ -264,9 +197,47 @@ parser.add_argument('--eps', type=float, default=0.5, help='convergence criterio
 
 args = parser.parse_args()
 title()
-if not os.path.exists(args.save):
-    os.makedirs(args.save)
 
-ldlists = pd.read_csv(args.zld, sep='\s+')  # header with 2 columns: z\tld
-print(f"LD list with {len(ldlists)} LD blocks loaded\n")
-ldlists.apply(colocalize, 1)
+zfile = [pd.read_csv(i, sep='\t', index_col=0) for i in args.z]
+ldmat = [pd.read_csv(i, sep='\s+', header=None).values for i in args.ld]
+
+XX = np.array([i['N'].values for i in zfile]).T
+ytX = np.array([(i['BETA']/i['SE']*np.sqrt(i['N'])).values for i in zfile]).T
+XtX = [(np.outer(np.sqrt(i['N']),np.sqrt(i['N']))*j) for (i,j) in zip(zfile, ldmat)]
+hess, varb = zip(*[get_HESS_h2_z(ldmat[i], (zfile[i]['BETA']/zfile[i]['SE']).values, np.max(zfile[i]['N']), ptLD=args.ptLD, ptp=args.ptp) for i in range(len(args.z))])
+if args.hess is not None:
+    hess = args.hess
+if args.varb is not None:
+    varb = args.varb
+for nk in range(args.K, 0, -1):
+    model = SharePro(XX.shape[0], nk, XX, hess, varb, sigma=args.sigma)
+    print(f"K = {nk}")
+    if model.train(XX, ytX, XtX, verbose=args.verbose, maxite=args.maxite, eps=args.eps):
+        eff, eff_gamma, eff_share = model.get_effect(cthres=args.cthres, ethres=args.ethres)
+        allcs = list(
+            zip(
+                eff.values(),
+                eff_gamma.values(),
+                eff_share.values(),
+                [model.k] * len(eff),
+            )
+        )
+        break
+
+if len(eff_share) > 0:
+    allcs = pd.DataFrame(allcs)
+    allcs['cs'] = ['/'.join([zfile[0].index[j] for j in i]) for i in allcs[0]]
+    allcs['share'] = allcs[2]
+    print(f'Colocalization probability: {max(allcs[2])}')
+    allcs['k'] = allcs[3]
+    allcs['variantProb'] = ['/'.join([str(j) for j in i]) for i in allcs[1]]
+    allcs[['cs', 'share', 'variantProb', 'k']].to_csv(args.save, sep='\t', header=True, index=False)
+else:
+    print(f'No effect groups detected at the current attainable coverage threshold {args.cthres}. Please increase power for GWAS.')
+for e in eff:
+    mcs_idx = [zfile[0].index[j] for j in eff[e]]
+    print(f'The {e}-th effect group contains effective variants:')
+    print(f'causal variants: {mcs_idx}')
+    print(f'variant probabilities for this effect group: {eff_gamma[e]}')
+    print(f'shared probability for this effect group: {eff_share[e]}')
+    print()
