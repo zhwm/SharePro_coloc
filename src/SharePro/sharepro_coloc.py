@@ -9,7 +9,7 @@ np.set_printoptions(precision=4, linewidth=200)
 def title():
     print('**********************************************************************')
     print('* SharePro for accurate and efficient colocalization                 *')
-    print('* Version 4.0.0                                                      *')
+    print('* Version 5.0.0                                                      *')
     print('* (C) Wenmin Zhang (wenmin.zhang@mail.mcgill.ca)                     *')
     print('**********************************************************************')
 
@@ -21,13 +21,13 @@ class SparseReg(object):
         self.k = K
         self.n = N
         self.sigma = sigma
-        self.lamb = np.array([k+1 for k in range(self.k)]) / self.n / varb / (1 - varb)
+        self.y_tau = 1.0 / (1 - varb)
+        self.priorb = 1.0 / varb
+        self.postn = self.n * self.y_tau + self.priorb
+        self.lamb = self.priorb / self.postn
         self.beta_mu = np.zeros([self.p, self.k])
         self.delta = np.zeros((self.p, self.k))
-        self.y_tau = 1.0 / (1 - varb)
-        self.u1 = np.log(self.sigma / (1 - self.sigma)) + 0.5 * np.log(self.lamb / (1 + self.lamb))
-        self.priorb = np.array([k+1 for k in range(self.k)]) / varb
-        self.postn = self.n * self.y_tau + self.priorb
+        self.u1 = np.log(self.sigma / (1 - self.sigma)) + 0.5 * np.log(self.lamb)
 
     def infer_q_beta(self, b_hat_s, R_s, GAM, k):
         """perform variational updates for the k-th effect with beta and c"""
@@ -35,8 +35,8 @@ class SparseReg(object):
         idxall.remove(k)
         beta_all_k = (GAM[:, idxall] * self.beta_mu[:, idxall] * self.delta[:, idxall]).sum(axis=1)
         res_beta = b_hat_s - np.dot(R_s, beta_all_k)
-        self.beta_mu[:, k] = 1 / (self.lamb[k] + 1) * res_beta
-        u = self.u1[k] + 0.5 * self.beta_mu[:, k] ** 2 * self.postn[k]
+        self.beta_mu[:, k] = (1 - self.lamb) * res_beta
+        u = self.u1 + 0.5 * self.beta_mu[:, k] ** 2 * self.postn
         self.delta[:, k] = expit(u)
         return u
 
@@ -83,7 +83,7 @@ class SharePro(object):
             unumexp = np.log(1 + np.exp(-unum))
             uall = unum.sum(axis=0) + unumexp.sum(axis=0) + self.usum1
             self.gamma[:, k] = softmax(uall)
-    
+
     def get_effect(self, ld, cthres, pthres):
         vidx = np.argsort(-self.gamma, axis=1)
         matidx = np.argsort(-self.gamma, axis=0)
@@ -92,7 +92,7 @@ class SharePro(object):
             mat_eff[p, vidx[p, 0]] = self.gamma[p, vidx[p, 0]]
         matdelta = np.prod(np.array([i.delta for i in self.SR]), axis=0)
         csum = mat_eff.sum(axis=0).round(2)
-        logging.info("Attainable coverage for effect groups: {}".format(csum))
+        logging.info(f"Attainable coverage for effect groups: {csum}")
         eff = {}
         eff_gamma = {}
         eff_share = {}
@@ -168,7 +168,7 @@ def main(args):
     ld = pd.read_csv(args.ld, sep='\s+', header=None).values
     bhatlst = [get_bhat(i['BETA'].values, i['SE'].values, i['N'].values) for i in zfile]
     Nlst = [max(i['N']) for i in zfile]
-    varb = [(i**2).max() for i in bhatlst] 
+    varb = [(i**2).max() for i in bhatlst]
     model = SharePro(zfile[0].shape[0], args.K, len(zfile), args.sigma, Nlst, varb)
     mc = model.train(bhatlst, ld, args.maxite, args.eps, args.ubound)
     if mc:
@@ -186,10 +186,10 @@ def main(args):
     allcs['cs'] = ['/'.join(zfile[0]['SNP'][j]) for j in eff.values()]
     allcs['share'] = ['{:.4}'.format(j) for j in eff_share.values()]
     allcs['variantProb'] = ['/'.join([str(j) for j in i]) for i in eff_gamma.values()]
-    allcs.to_csv('{}.sharepro.txt'.format(args.save), sep='\t', header=True, index=False)    
+    allcs.to_csv('{}.sharepro.txt'.format(args.save), sep='\t', header=True, index=False)
 
 if __name__ == '__main__':
     args = parse_args()
-    logging.basicConfig(filename='{}.sharepro.log'.format(args.save), level=logging.INFO)
+    logging.basicConfig(filename='{}.sharepro.log'.format(args.save), level=logging.INFO, filemode='w')
     print_args(args)
     main(args)

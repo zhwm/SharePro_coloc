@@ -71,6 +71,7 @@ The [log file](doc/res.sharepro.log) contains the expected output of the algorit
 * Version 2.0.0 (2023/08/25) Added K=1 in case of LD mismatch
 * Version 3.0.0 (2024/02/21) Added scripts to run SharePro in one locus with GWAS (BETA/SE/N) and ld files
 * Version 4.0.0 (2024/04/08) Refactored code
+* Version 5.0.0 (2024/04/11) Refactored code for lamb
 
 ## Citations
 
