@@ -175,6 +175,7 @@ def main(args):
         eff, eff_gamma, eff_share = model.get_effect(ld, args.cthres, args.pthres)
     else:
         model = SharePro(zfile[0].shape[0], 1, len(zfile), args.sigma, Nlst, varb)
+        mc = model.train(bhatlst, ld, args.maxite, args.eps, args.ubound)
         eff, eff_gamma, eff_share = model.get_effect(ld, args.cthres, args.pthres)
     for e in eff:
         mcs_idx = [zfile[0]['SNP'][j] for j in eff[e]]
