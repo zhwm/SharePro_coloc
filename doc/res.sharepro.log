@@ -1,51 +1,57 @@
-INFO:root:z: ['dat/BMD_bse.txt', 'dat/RSPO3_bse.txt']
-INFO:root:ld: dat/RSPO3.ld
-INFO:root:save: doc/res
-INFO:root:sigma: 1e-05
-INFO:root:K: 10
-INFO:root:maxite: 100
-INFO:root:eps: 0.1
-INFO:root:ubound: 1000000
-INFO:root:cthres: 0.95
-INFO:root:pthres: 0.5
-INFO:root:**********************************************************************
-INFO:root:Iteration-->0 . Likelihood: 1420.9 . KL_b: -28.3 . KL_c: -51.1 . KL_s: 40.9 . ELBO: 1382.4
-INFO:root:**********************************************************************
-INFO:root:Iteration-->1 . Likelihood: 1425.0 . KL_b: -25.7 . KL_c: -46.5 . KL_s: 39.3 . ELBO: 1392.0
-INFO:root:**********************************************************************
-INFO:root:Iteration-->2 . Likelihood: 1427.2 . KL_b: -25.4 . KL_c: -46.0 . KL_s: 39.1 . ELBO: 1394.9
-INFO:root:**********************************************************************
-INFO:root:Iteration-->3 . Likelihood: 1427.3 . KL_b: -25.4 . KL_c: -46.0 . KL_s: 39.1 . ELBO: 1395.0
-INFO:root:**********************************************************************
-INFO:root:Iteration-->4 . Likelihood: 1427.4 . KL_b: -25.4 . KL_c: -46.0 . KL_s: 39.1 . ELBO: 1395.0
-INFO:root:Attainable coverage for effect groups: [1.   1.   1.   0.99 1.   1.   0.83 0.   0.   0.12]
-INFO:root:The 0-th effect group contains effective variants:
-INFO:root:causal variants: ['rs7741021', 'rs9482773']
-INFO:root:variant probabilities for this effect group: [0.6085, 0.3915]
-INFO:root:shared probability for this effect group: 1.0
+2024-04-19 15:09:44 - **********************************************************************
+2024-04-19 15:09:44 - * SharePro for accurate and efficient colocalization                 *
+2024-04-19 15:09:44 - * Version 5.0.0                                                      *
+2024-04-19 15:09:44 - * (C) Wenmin Zhang (wenmin.zhang@mail.mcgill.ca)                     *
+2024-04-19 15:09:44 - **********************************************************************
+2024-04-19 15:09:44 - z: ['dat/BMD_bse.txt', 'dat/RSPO3_bse.txt']
+2024-04-19 15:09:44 - ld: dat/RSPO3.ld
+2024-04-19 15:09:44 - save: doc/res
+2024-04-19 15:09:44 - sigma: 1e-05
+2024-04-19 15:09:44 - K: 10
+2024-04-19 15:09:44 - maxite: 100
+2024-04-19 15:09:44 - eps: 0.1
+2024-04-19 15:09:44 - ubound: 1000000
+2024-04-19 15:09:44 - cthres: 0.95
+2024-04-19 15:09:44 - pthres: 0.5
+2024-04-19 15:09:44 - **********************************************************************
+2024-04-19 15:09:44 - Iteration-->0 . Likelihood: 1420.9 . KL_b: -28.3 . KL_c: -51.1 . KL_s: 40.9 . ELBO: 1382.4
+2024-04-19 15:09:44 - **********************************************************************
+2024-04-19 15:09:44 - Iteration-->1 . Likelihood: 1425.0 . KL_b: -25.7 . KL_c: -46.5 . KL_s: 39.3 . ELBO: 1392.0
+2024-04-19 15:09:45 - **********************************************************************
+2024-04-19 15:09:45 - Iteration-->2 . Likelihood: 1427.2 . KL_b: -25.4 . KL_c: -46.0 . KL_s: 39.1 . ELBO: 1394.9
+2024-04-19 15:09:45 - **********************************************************************
+2024-04-19 15:09:45 - Iteration-->3 . Likelihood: 1427.3 . KL_b: -25.4 . KL_c: -46.0 . KL_s: 39.1 . ELBO: 1395.0
+2024-04-19 15:09:45 - **********************************************************************
+2024-04-19 15:09:45 - Iteration-->4 . Likelihood: 1427.4 . KL_b: -25.4 . KL_c: -46.0 . KL_s: 39.1 . ELBO: 1395.0
+2024-04-19 15:09:45 - The SharePro algorithm has converged.
+2024-04-19 15:09:45 - Attainable coverage for effect groups: [1.   1.   1.   0.99 1.   1.   0.83 0.   0.   0.12]
+2024-04-19 15:09:45 - The 0-th effect group contains effective variants:
+2024-04-19 15:09:45 - causal variants: ['rs7741021', 'rs9482773']
+2024-04-19 15:09:45 - variant probabilities for this effect group: [0.6085, 0.3915]
+2024-04-19 15:09:45 - shared probability for this effect group: 1.0
 
-INFO:root:The 1-th effect group contains effective variants:
-INFO:root:causal variants: ['rs853974']
-INFO:root:variant probabilities for this effect group: [1.0]
-INFO:root:shared probability for this effect group: 1.0
+2024-04-19 15:09:45 - The 1-th effect group contains effective variants:
+2024-04-19 15:09:45 - causal variants: ['rs853974']
+2024-04-19 15:09:45 - variant probabilities for this effect group: [1.0]
+2024-04-19 15:09:45 - shared probability for this effect group: 1.0
 
-INFO:root:The 2-th effect group contains effective variants:
-INFO:root:causal variants: ['rs577721086', 'rs72959041']
-INFO:root:variant probabilities for this effect group: [0.5288, 0.471]
-INFO:root:shared probability for this effect group: 0.003
+2024-04-19 15:09:45 - The 2-th effect group contains effective variants:
+2024-04-19 15:09:45 - causal variants: ['rs577721086', 'rs72959041']
+2024-04-19 15:09:45 - variant probabilities for this effect group: [0.5288, 0.471]
+2024-04-19 15:09:45 - shared probability for this effect group: 0.003
 
-INFO:root:The 3-th effect group contains effective variants:
-INFO:root:causal variants: ['rs717796', 'rs7775814', 'rs1512450', 'rs7775090', 'rs1512449', 'rs910536', 'rs6902741', 'rs1569870', 'rs7738255', 'rs1080708', 'rs7756072']
-INFO:root:variant probabilities for this effect group: [0.1216, 0.1167, 0.1018, 0.0879, 0.0867, 0.085, 0.0785, 0.0747, 0.0705, 0.0705, 0.0639]
-INFO:root:shared probability for this effect group: 0.0001
+2024-04-19 15:09:45 - The 3-th effect group contains effective variants:
+2024-04-19 15:09:45 - causal variants: ['rs717796', 'rs7775814', 'rs1512450', 'rs7775090', 'rs1512449', 'rs910536', 'rs6902741', 'rs1569870', 'rs7738255', 'rs1080708', 'rs7756072']
+2024-04-19 15:09:45 - variant probabilities for this effect group: [0.1216, 0.1167, 0.1018, 0.0879, 0.0867, 0.085, 0.0785, 0.0747, 0.0705, 0.0705, 0.0639]
+2024-04-19 15:09:45 - shared probability for this effect group: 0.0001
 
-INFO:root:The 4-th effect group contains effective variants:
-INFO:root:causal variants: ['rs11759578', 'rs77525683', 'rs73593094', 'rs73593068', 'rs73577838', 'rs75607329']
-INFO:root:variant probabilities for this effect group: [0.6094, 0.2026, 0.069, 0.0335, 0.0279, 0.0139]
-INFO:root:shared probability for this effect group: 0.0001
+2024-04-19 15:09:45 - The 4-th effect group contains effective variants:
+2024-04-19 15:09:45 - causal variants: ['rs11759578', 'rs77525683', 'rs73593094', 'rs73593068', 'rs73577838', 'rs75607329']
+2024-04-19 15:09:45 - variant probabilities for this effect group: [0.6094, 0.2026, 0.069, 0.0335, 0.0279, 0.0139]
+2024-04-19 15:09:45 - shared probability for this effect group: 0.0001
 
-INFO:root:The 5-th effect group contains effective variants:
-INFO:root:causal variants: ['rs2800728', 'rs727330', 'rs727331', 'rs2800720', 'rs2800721', 'rs10456964', 'rs2800733', 'rs2800727', 'rs2745351', 'rs2745356', 'rs2800732', 'rs2745355', 'rs727332', 'rs2800729', 'rs2800730', 'rs719728', 'rs2800719', 'rs2745354', 'rs2800718', 'rs2800723', 'rs2800722']
-INFO:root:variant probabilities for this effect group: [0.0688, 0.0665, 0.0658, 0.0647, 0.0608, 0.0533, 0.0521, 0.0514, 0.0464, 0.0411, 0.041, 0.0404, 0.0398, 0.0394, 0.0387, 0.0379, 0.034, 0.0327, 0.0324, 0.0323, 0.0322]
-INFO:root:shared probability for this effect group: 0.0001
+2024-04-19 15:09:45 - The 5-th effect group contains effective variants:
+2024-04-19 15:09:45 - causal variants: ['rs2800728', 'rs727330', 'rs727331', 'rs2800720', 'rs2800721', 'rs10456964', 'rs2800733', 'rs2800727', 'rs2745351', 'rs2745356', 'rs2800732', 'rs2745355', 'rs727332', 'rs2800729', 'rs2800730', 'rs719728', 'rs2800719', 'rs2745354', 'rs2800718', 'rs2800723', 'rs2800722']
+2024-04-19 15:09:45 - variant probabilities for this effect group: [0.0688, 0.0665, 0.0658, 0.0647, 0.0608, 0.0533, 0.0521, 0.0514, 0.0464, 0.0411, 0.041, 0.0404, 0.0398, 0.0394, 0.0387, 0.0379, 0.034, 0.0327, 0.0324, 0.0323, 0.0322]
+2024-04-19 15:09:45 - shared probability for this effect group: 0.0001
 

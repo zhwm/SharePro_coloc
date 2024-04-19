@@ -7,11 +7,11 @@ from scipy.special import softmax, expit
 np.set_printoptions(precision=4, linewidth=200)
 
 def title():
-    print('**********************************************************************')
-    print('* SharePro for accurate and efficient colocalization                 *')
-    print('* Version 5.0.0                                                      *')
-    print('* (C) Wenmin Zhang (wenmin.zhang@mail.mcgill.ca)                     *')
-    print('**********************************************************************')
+    logging.info('**********************************************************************')
+    logging.info('* SharePro for accurate and efficient colocalization                 *')
+    logging.info('* Version 5.0.0                                                      *')
+    logging.info('* (C) Wenmin Zhang (wenmin.zhang@mail.mcgill.ca)                     *')
+    logging.info('**********************************************************************')
 
 
 class SparseReg(object):
@@ -130,10 +130,11 @@ class SharePro(object):
             logging.info('*' * 70)
             logging.info('Iteration-->{} . Likelihood: {:.1f} . KL_b: {:.1f} . KL_c: {:.1f} . KL_s: {:.1f} . ELBO: {:.1f}'.format(ite, ll, mklbeta, mkldelta, mklgamma, elbo))
             if abs(elbo - loss) < eps:
+                logging.info("The SharePro algorithm has converged.")
                 converged = True
                 break
             if ite == (maxite - 1) or elbo > ubound:
-                print("Detected mismatch between summary statistics and LD matrix. Set K to 1...")
+                logging.info("The SharePro algorithm did not converge at {}. Set K to 1...".format(self.k))
                 converged = False
                 break
             loss = elbo
@@ -166,7 +167,12 @@ def print_args(args):
 def main(args):
     zfile = [pd.read_csv(i, sep='\t') for i in args.z]
     ld = pd.read_csv(args.ld, sep='\s+', header=None).values
+    assert not np.isnan(ld).any(), "The LD matrix contains NaN values"
     bhatlst = [get_bhat(i['BETA'].values, i['SE'].values, i['N'].values) for i in zfile]
+    for bhat in bhatlst:
+        assert len(bhat) == len(bhatlst[0]), "The number of variants in summary statistics files is different"
+    assert len(ld)==len(bhatlst[0]), "The number of variants in LD matrix and summary statistics is different!"
+    assert not np.isnan(bhatlst).any(), "The summary statistic files contain NaN values"
     Nlst = [max(i['N']) for i in zfile]
     varb = [(i**2).max() for i in bhatlst]
     model = SharePro(zfile[0].shape[0], args.K, len(zfile), args.sigma, Nlst, varb)
@@ -177,12 +183,15 @@ def main(args):
         model = SharePro(zfile[0].shape[0], 1, len(zfile), args.sigma, Nlst, varb)
         mc = model.train(bhatlst, ld, args.maxite, args.eps, args.ubound)
         eff, eff_gamma, eff_share = model.get_effect(ld, args.cthres, args.pthres)
-    for e in eff:
-        mcs_idx = [zfile[0]['SNP'][j] for j in eff[e]]
-        logging.info(f'The {e}-th effect group contains effective variants:')
-        logging.info(f'causal variants: {mcs_idx}')
-        logging.info(f'variant probabilities for this effect group: {eff_gamma[e]}')
-        logging.info(f'shared probability for this effect group: {eff_share[e]}\n')
+    if len(eff) > 0:
+        for e in eff:
+            mcs_idx = [zfile[0]['SNP'][j] for j in eff[e]]
+            logging.info(f'The {e}-th effect group contains effective variants:')
+            logging.info(f'causal variants: {mcs_idx}')
+            logging.info(f'variant probabilities for this effect group: {eff_gamma[e]}')
+            logging.info(f'shared probability for this effect group: {eff_share[e]}\n')
+    else:
+        logging.info("No effect groups can be detected at the current coverage threshold {}. Please use well-powered GWAS.".format(args.cthres))
     allcs = pd.DataFrame()
     allcs['cs'] = ['/'.join(zfile[0]['SNP'][j]) for j in eff.values()]
     allcs['share'] = ['{:.4}'.format(j) for j in eff_share.values()]
@@ -191,6 +200,7 @@ def main(args):
 
 if __name__ == '__main__':
     args = parse_args()
-    logging.basicConfig(filename='{}.sharepro.log'.format(args.save), level=logging.INFO, filemode='w')
+    logging.basicConfig(filename='{}.sharepro.log'.format(args.save), level=logging.INFO, filemode='w', format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    title()
     print_args(args)
     main(args)
