@@ -1,6 +1,6 @@
 # SharePro for colocalization analysis
 
-SharePro is a command line tool for efficient and accurate colocalization. For analysis conducted in the [SharePro for colocalization analysis paper](https://doi.org/10.1101/2023.07.24.550431), please refer to [SharePro_coloc_analysis](https://github.com/zhwm/sharepro_coloc_analysis).
+SharePro is a command line tool for efficient and accurate colocalization. For analysis conducted in the [SharePro for colocalization analysis paper](https://doi.org/10.1093/bioinformatics/btae295), please refer to [SharePro_coloc_analysis](https://github.com/zhwm/sharepro_coloc_analysis).
 
 ## Overview 
 
@@ -77,4 +77,15 @@ The [log file](doc/res.sharepro.log) contains the expected output of the algorit
 
 If you find SharePro for colocalization analysis useful, please cite:
 
-[Wenmin Zhang, Tianyuan Lu, Robert Sladek, Yue Li, Hamed Najafabadi, Josée Dupuis. SharePro: an accurate and efficient genetic colocalization method accounting for multiple causal signals.](https://doi.org/10.1101/2023.07.24.550431)
+```
+@article{zhang2024sharepro,
+  title={SharePro: an accurate and efficient genetic colocalization method accounting for multiple causal signals},
+  author={Zhang, Wenmin and Lu, Tianyuan and Sladek, Robert and Li, Yue and Najafabadi, Hamed and Dupuis, Jos{\'e}e},
+  journal={Bioinformatics},
+  volume={40},
+  number={5},
+  pages={btae295},
+  year={2024},
+  publisher={Oxford University Press}
+}
+```
